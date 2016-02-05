@@ -35,7 +35,7 @@
 -(void)layoutSubviews
 {
     [super layoutSubviews];
-    self.backgroundColor=[UIColor redColor];
+    self.backgroundColor=[UIColor blackColor];
 }
 #pragma private 方法
 

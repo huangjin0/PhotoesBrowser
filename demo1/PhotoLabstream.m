@@ -12,26 +12,38 @@
 @interface PhotoLabstream()<UIScrollViewDelegate>
 {
     UIPageControl*page;
+    UILabel*label;
     
 }
 
 @property (nonatomic,assign) NSInteger    num;//总的页数
 @property (nonatomic,assign) NSInteger    currentPage;//当前页
 @property (nonatomic,strong) UIScrollView *scrollView;
+@property(nonatomic,assign)BOOL     isShowPageControl;
 
 @end
 @implementation PhotoLabstream
-
--(id)initWithFrame:(CGRect)frame Images:(NSArray*)array
+@synthesize  isShowPageControl;
+-(id)initWithFrame:(CGRect)frame Images:(NSArray*)array isShowPage:(BOOL)isShowPage;
 {
     if (self=[super initWithFrame:frame]) {
 
         [self setFrame:[UIScreen mainScreen].bounds];
         self.scrollView=[[UIScrollView alloc]init];
-        page=[[UIPageControl alloc]init];
+        isShowPageControl=isShowPage;
         [self addSubview:self.scrollView];
-       [self insertSubview:page aboveSubview:self.scrollView];
-          self.photoes = array;
+        if (isShowPageControl) {
+             page=[[UIPageControl alloc]init];
+            [self insertSubview:page aboveSubview:self.scrollView];
+        }else{
+        
+            label=[[UILabel alloc]init];
+            [self insertSubview:label aboveSubview:self.scrollView];
+        }
+       
+        
+       
+        self.photoes = array;
        [self addGesture];
     }
     return self;
@@ -42,7 +54,14 @@
     [super layoutSubviews];
     self.backgroundColor=[UIColor blackColor];
     [self setScroolView];
-    [self setScollViewPage];
+    if (isShowPageControl) {
+      [self setScollViewPage];
+    }else{
+        
+       [self setLabel];
+    
+    }
+    
 
 }
 #pragma public 方法
@@ -81,7 +100,7 @@
             CustomImageView*imageView=[[CustomImageView alloc]initWithFrame:CGRectZero];
             [imageView setImage:image];
         [imageView setFrame:CGRectMake(SCRRENWIDTH*_currentPage,0, SCRRENWIDTH,SCRRENHEIGHT)];
-            NSLog(@"imageview:%@",imageView);
+          
             [_scrollView addSubview:imageView];
             _currentPage++;
         }
@@ -94,6 +113,15 @@
          [_scrollView setDelegate:self];
     }
 }
+
+-(void)setLabel
+{
+     CGFloat labelWdth   = 80;
+    [label setFrame:CGRectMake(CACULATECENTREORIGN(labelWdth), SCRRENHEIGHT-20.0, labelWdth, 20.0)];
+    [label setText:[NSString stringWithFormat:@"1 %@ %ld",@"/",self.photoes.count]];
+    [label setTextColor:[UIColor whiteColor]];
+
+}
 //设置UIPageControl
 -(void)setScollViewPage
 {
@@ -102,8 +130,8 @@
     [page setFrame:CGRectMake(CACULATECENTREORIGN(pageWdth), SCRRENHEIGHT-20.0, pageWdth, 20.0)];
     page.numberOfPages = self.photoes.count;
     page.currentPage   = 0;
-    page.pageIndicatorTintColor=[UIColor blueColor];
-    page.currentPageIndicatorTintColor=[UIColor whiteColor];
+    page.pageIndicatorTintColor=self.pageIndicatorColor;
+    page.currentPageIndicatorTintColor=self.currentPageIndicatorColor;
 
     [page addTarget:self action:@selector(moveScollview) forControlEvents:UIControlEventTouchUpInside];
 }
@@ -124,8 +152,15 @@
 -(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
     
-    NSLog(@"currentPage:%f",_scrollView.contentOffset.x);
+    if (isShowPageControl) {
   page.currentPage=(int)_scrollView.contentOffset.x/scrollView.frame.size.width;
+    }else
+    {
+  int currrent=(int)_scrollView.contentOffset.x/scrollView.frame.size.width;
+        
+        [label setText:[NSString stringWithFormat:@"%d %@ %ld",currrent+1,@"/",self.photoes.count]];
+    }
+  
 
 }
 #pragma 属性方法

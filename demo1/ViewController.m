@@ -27,8 +27,12 @@
 -(IBAction)click:(id)sender
 {
     NSArray*array=@[[UIImage imageNamed:@"list_icon_legend@3x"],[UIImage imageNamed:@"btn_start_1@3x"],[UIImage imageNamed:@"00_Start"],[UIImage imageNamed:@"01_Title"],[UIImage imageNamed:@"02_Menu"],[UIImage imageNamed:@"111.jpg"]];
-    PhotoLabstream*s=[[PhotoLabstream alloc]initWithFrame:[UIScreen mainScreen].bounds Images:array];
+    PhotoLabstream*s=[[PhotoLabstream alloc]initWithFrame:[UIScreen mainScreen].bounds Images:array isShowPage:NO];
+    s.pageIndicatorColor=[UIColor whiteColor];
+    s.currentPageIndicatorColor=[UIColor orangeColor];
+    
     [self.view addSubview:s];
+    
 }
 
 - (void)didReceiveMemoryWarning {
